@@ -1,0 +1,46 @@
+CREATE TABLE Customers (
+    customer_id INT PRIMARY KEY,  -- Customer's unique ID
+    first_name VARCHAR(50) NOT NULL,  -- First name
+    last_name VARCHAR(50) NOT NULL,   -- Last name
+    email VARCHAR(100) UNIQUE,       -- Email, must be unique
+    phone_number VARCHAR(15)         -- Phone number
+);
+CREATE TABLE Accounts (
+    account_id INT PRIMARY KEY,         -- Unique account ID
+    customer_id INT,                    -- Foreign key to Customers
+    account_type VARCHAR(20) CHECK (account_type IN ('Savings', 'Checking')), -- Account type
+    balance DECIMAL(15, 2) DEFAULT 0.00,  -- Account balance
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)  -- Link to Customers table
+);
+CREATE TABLE Transactions (
+    transaction_id INT PRIMARY KEY,     -- Unique transaction ID
+    account_id INT,                     -- Account involved
+    transaction_type VARCHAR(10),       -- 'Deposit' or 'Withdrawal'
+    amount DECIMAL(15, 2),              -- Transaction amount
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Date of transaction
+    FOREIGN KEY (account_id) REFERENCES Accounts(account_id)  -- Link to Accounts table
+);
+CREATE SEQUENCE transaction_id_seq
+START WITH 1
+INCREMENT BY 1;
+CREATE SEQUENCE account_id_seq
+START WITH 1000
+INCREMENT BY 1;
+CREATE VIEW CustomerAccountDetails AS
+SELECT c.customer_id, c.first_name, c.last_name, a.account_id, a.account_type, a.balance
+FROM Customers c
+JOIN Accounts a ON c.customer_id = a.customer_id;
+CREATE VIEW RecentTransactions AS
+SELECT t.transaction_id, t.account_id, t.transaction_type, t.amount, t.transaction_date
+FROM Transactions t
+WHERE t.transaction_date > CURRENT_DATE - INTERVAL '7 days';
+CREATE INDEX idx_transactions_account_id ON Transactions (account_id);
+INSERT INTO Customers (customer_id, first_name, last_name, email, phone_number)
+VALUES (1, 'John', 'Doe', 'john.doe@example.com', '1234567890'),
+       (2, 'Jane', 'Smith', 'jane.smith@example.com', '0987654321');
+INSERT INTO Accounts (account_id, customer_id, account_type, balance)
+VALUES (nextval('account_id_seq'), 1, 'Savings', 1000.00),
+       (nextval('account_id_seq'), 2, 'Checking', 500.00);
+INSERT INTO Transactions (transaction_id, account_id, transaction_type, amount)
+VALUES (nextval('transaction_id_seq'), 1, 'Deposit', 200.00),
+       (nextval('transaction_id_seq'), 2, 'Withdrawal', 50.00);

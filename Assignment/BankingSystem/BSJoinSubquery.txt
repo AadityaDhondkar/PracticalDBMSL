@@ -1,0 +1,94 @@
+-- Create the Customers table
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Address VARCHAR(200)
+);
+
+-- Create the Accounts table
+CREATE TABLE Accounts (
+    AccountID INT PRIMARY KEY,
+    CustomerID INT,
+    AccountType VARCHAR(50),
+    Balance DECIMAL(10, 2),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- Create the Transactions table
+CREATE TABLE Transactions (
+    TransactionID INT PRIMARY KEY,
+    AccountID INT,
+    TransactionDate DATE,
+    Amount DECIMAL(10, 2),
+    FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID)
+);
+
+-- Insert data into Customers table
+INSERT INTO Customers (CustomerID, Name, Address)
+VALUES (1, 'John Doe', '123 Main St'),
+       (2, 'Jane Smith', '456 Elm St'),
+       (3, 'Sam Brown', '789 Oak St');
+
+-- Insert data into Accounts table
+INSERT INTO Accounts (AccountID, CustomerID, AccountType, Balance)
+VALUES (101, 1, 'Checking', 1500),
+       (102, 1, 'Savings', 5000),
+       (103, 2, 'Checking', 300),
+       (104, 3, 'Checking', 2500);
+
+-- Insert data into Transactions table
+INSERT INTO Transactions (TransactionID, AccountID, TransactionDate, Amount)
+VALUES (1, 101, '2024-11-01', 200),
+       (2, 101, '2024-11-02', -100),
+       (3, 103, '2024-11-01', 50),
+       (4, 104, '2024-11-03', -500);
+
+-- -- INNER JOIN Example:
+-- Retrieve list of customers along with their account balances
+SELECT c.Name, a.AccountType, a.Balance
+FROM Customers c
+INNER JOIN Accounts a ON c.CustomerID = a.CustomerID;
+
+-- LEFT JOIN Example:
+-- Retrieve all customers and their account details, even if they don't have an account
+SELECT c.Name, a.AccountType, a.Balance
+FROM Customers c
+LEFT JOIN Accounts a ON c.CustomerID = a.CustomerID;
+
+-- RIGHT JOIN Example:
+-- Retrieve all accounts and their customer details, even if they don't have an associated customer
+SELECT c.Name, a.AccountType, a.Balance
+FROM Customers c
+RIGHT JOIN Accounts a ON c.CustomerID = a.CustomerID;
+
+-- FULL OUTER JOIN Example:
+-- Retrieve all customers and all accounts, even if there is no matching data
+SELECT c.Name, a.AccountType, a.Balance
+FROM Customers c
+FULL OUTER JOIN Accounts a ON c.CustomerID = a.CustomerID;
+
+-- Sub-query Example 1:
+-- Retrieve customers with a balance greater than 1000 in any of their accounts
+SELECT c.Name, a.Balance
+FROM Customers c
+JOIN Accounts a ON c.CustomerID = a.CustomerID
+WHERE a.Balance > (SELECT 1000);
+
+-- Sub-query Example 2:
+-- Retrieve customers with an account balance greater than the highest balance of a 'Checking' account
+SELECT c.Name
+FROM Customers c
+JOIN Accounts a ON c.CustomerID = a.CustomerID
+WHERE a.Balance > (SELECT MAX(Balance) 
+                    FROM Accounts 
+                    WHERE AccountType = 'Checking');
+
+-- Create a View to show Account Details with balances and transactions
+CREATE VIEW AccountDetails AS
+SELECT c.Name, a.AccountType, a.Balance, t.TransactionDate, t.Amount
+FROM Customers c
+JOIN Accounts a ON c.CustomerID = a.CustomerID
+LEFT JOIN Transactions t ON a.AccountID = t.AccountID;
+
+-- Querying the View
+SELECT * FROM AccountDetails;
