@@ -1,0 +1,187 @@
+MongoDB Queries for Institute Database and Student Collection
+
+This file outlines the instructions for creating a MongoDB database, creating a collection, and performing CRUD operations such as inserting documents, retrieving data, and applying sorting.
+
+
+1. Set Up MongoDB Environment
+
+Before proceeding with the instructions, ensure that you have MongoDB installed and running on your machine. You can download it from MongoDB Official Site (https://www.mongodb.com/try/download/community). After installing MongoDB, you can start it by using the command mongod (for Linux/MacOS) or running the MongoDB server via the MongoDB Compass application.
+
+
+2. Create Database and Collection
+
+2.1 Create Database `Institute`
+
+To create the `Institute` database, use the following command:
+
+use Institute
+
+This command switches to the `Institute` database. If the database doesn't already exist, MongoDB will create it when you insert data into it.
+
+2.2 Create Collection `Students`
+
+To create a collection named `Students`, you don't need to explicitly create it. MongoDB will automatically create the collection when you insert the first document. However, if you want to explicitly create it, you can use the following command:
+
+db.createCollection("Students")
+
+
+3. Insert 10 Documents into the `Students` Collection
+
+Insert 10 documents into the `Students` collection with the following structure:
+
+db.Students.insertMany([
+    { 
+        RollNo: 1, 
+        Name: "John Doe", 
+        Age: 23, 
+        Branch: "Computer Science", 
+        Address: { City: "New York", State: "NY" }, 
+        Hobbies: ["Reading", "Swimming"] 
+    },
+    { 
+        RollNo: 2, 
+        Name: "Jane Smith", 
+        Age: 21, 
+        Branch: "Electrical Engineering", 
+        Address: { City: "Los Angeles", State: "CA" }, 
+        Hobbies: ["Painting", "Cycling"] 
+    },
+    { 
+        RollNo: 3, 
+        Name: "Alice Johnson", 
+        Age: 24, 
+        Branch: "Mechanical Engineering", 
+        Address: { City: "Chicago", State: "IL" }, 
+        Hobbies: ["Traveling", "Cooking"] 
+    },
+    { 
+        RollNo: 4, 
+        Name: "Bob Lee", 
+        Age: 20, 
+        Branch: "Civil Engineering", 
+        Address: { City: "Houston", State: "TX" }, 
+        Hobbies: ["Photography", "Hiking"] 
+    },
+    { 
+        RollNo: 5, 
+        Name: "Mary Wilson", 
+        Age: 22, 
+        Branch: "Computer Science", 
+        Address: { City: "San Francisco", State: "CA" }, 
+        Hobbies: ["Writing", "Music"] 
+    },
+    { 
+        RollNo: 6, 
+        Name: "David Brown", 
+        Age: 25, 
+        Branch: "Physics", 
+        Address: { City: "Boston", State: "MA" }, 
+        Hobbies: ["Astronomy", "Chess"] 
+    },
+    { 
+        RollNo: 7, 
+        Name: "Sophia Clark", 
+        Age: 19, 
+        Branch: "Mathematics", 
+        Address: { City: "Dallas", State: "TX" }, 
+        Hobbies: ["Reading", "Jogging"] 
+    },
+    { 
+        RollNo: 8, 
+        Name: "James Miller", 
+        Age: 23, 
+        Branch: "Biology", 
+        Address: { City: "Seattle", State: "WA" }, 
+        Hobbies: ["Birdwatching", "Camping"] 
+    },
+    { 
+        RollNo: 9, 
+        Name: "Isabella Davis", 
+        Age: 22, 
+        Branch: "Literature", 
+        Address: { City: "Miami", State: "FL" }, 
+        Hobbies: ["Writing", "Dancing"] 
+    },
+    { 
+        RollNo: 10, 
+        Name: "Ethan Martinez", 
+        Age: 21, 
+        Branch: "Chemistry", 
+        Address: { City: "San Diego", State: "CA" }, 
+        Hobbies: ["Gardening", "Cooking"] 
+    }
+])
+
+
+4. Display All Students' Information
+
+To display all student information in the `Students` collection, use the following query:
+
+db.Students.find().pretty()
+
+The pretty() method will format the output to be more readable.
+
+
+5. Display Student Information Whose Age is Greater Than 22
+
+To find students whose age is greater than 22, use the following query:
+
+db.Students.find({ Age: { $gt: 22 } }).pretty()
+
+Here, $gt is the "greater than" operator.
+
+
+6. Display Student Information Sorted on Name Field
+
+To display all students sorted by their `Name` field in ascending order, use the following query:
+
+db.Students.find().sort({ Name: 1 }).pretty()
+
+Here, `1` indicates ascending order (use `-1` for descending order).
+
+
+7. Perform Update and Delete Operations (Optional)
+
+7.1 Update a Student’s Age
+
+To update a student's age (for example, updating the age of the student with `RollNo` 1 to 24), use the following query:
+
+db.Students.updateOne(
+    { RollNo: 1 },
+    { $set: { Age: 24 } }
+)
+
+7.2 Delete a Student Document
+
+To delete a student with a specific `RollNo` (for example, deleting the student with `RollNo` 2), use the following query:
+
+db.Students.deleteOne({ RollNo: 2 })
+
+7.3 Use Logical Operators in Queries
+
+You can use logical operators like $or, $and, $nor, and $not to combine multiple conditions.
+
+For example, to find students who are either in the "Computer Science" branch or are over the age of 22:
+
+db.Students.find({
+    $or: [
+        { Branch: "Computer Science" },
+        { Age: { $gt: 22 } }
+    ]
+}).pretty()
+
+
+8. Conclusion
+
+With these commands, you have:
+
+1. Created a database `Institute`.
+2. Created a collection `Students`.
+3. Inserted documents (students) into the collection.
+4. Displayed student information with different queries.
+5. Used logical operators for filtering.
+6. Sorted the data based on the `Name` field.
+
+Feel free to modify or extend these queries as per your requirements for further operations such as updates, deletions, or more complex filtering.
+
+End of MongoDB Queries File
