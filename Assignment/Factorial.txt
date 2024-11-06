@@ -1,0 +1,27 @@
+-- Create the Fact table if it doesn't exist
+CREATE TABLE Fact (
+    number INT,
+    factorial INT
+);
+
+-- Begin the anonymous PL/SQL block
+DECLARE
+    v_number INT := 5;        -- The number whose factorial is to be calculated
+    v_factorial INT := 1;     -- Variable to store the factorial result
+BEGIN
+    -- Control structure: loop to calculate factorial
+    FOR i IN 1..v_number LOOP
+        v_factorial := v_factorial * i;
+    END LOOP;
+
+    -- Insert the number and its factorial into the Fact table
+    INSERT INTO Fact (number, factorial)
+    VALUES (v_number, v_factorial);
+
+    -- Commit the transaction
+    COMMIT;
+    
+    -- Optional: Output the result (can be viewed in SQL*Plus or similar tools)
+    DBMS_OUTPUT.PUT_LINE('Factorial of ' || v_number || ' is ' || v_factorial);
+END;
+/
