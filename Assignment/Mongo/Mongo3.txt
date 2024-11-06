@@ -1,0 +1,156 @@
+MongoDB Queries for Institute Database and Student Collection
+
+This file outlines the instructions for creating a MongoDB database, creating a collection, and performing CRUD operations such as inserting documents, retrieving data, and performing searches based on conditions.
+
+
+1. Set Up MongoDB Environment
+
+Before proceeding with the instructions, ensure that you have MongoDB installed and running on your machine. You can download it from MongoDB Official Site (https://www.mongodb.com/try/download/community). After installing MongoDB, you can start it by using the command mongod (for Linux/MacOS) or running the MongoDB server via the MongoDB Compass application.
+
+
+2. Create Database and Collection
+
+2.1 Create Database `Institute`
+
+To create the `Institute` database, use the following command:
+
+use Institute
+
+This command switches to the `Institute` database. If the database doesn't already exist, MongoDB will create it when you insert data into it.
+
+2.2 Create Collection `Students`
+
+To create a collection named `Students`, you don't need to explicitly create it. MongoDB will automatically create the collection when you insert the first document. However, if you want to explicitly create it, you can use the following command:
+
+db.createCollection("Students")
+
+
+3. Insert 10 Documents into the `Students` Collection
+
+Insert 10 documents into the `Students` collection with the following structure:
+
+db.Students.insertMany([
+    { 
+        RollNo: 1, 
+        Name: "John Doe", 
+        Age: 23, 
+        Branch: "Computer Science", 
+        Address: { City: "New York", State: "NY" }, 
+        Hobbies: ["Reading", "Swimming"] 
+    },
+    { 
+        RollNo: 2, 
+        Name: "Jane Smith", 
+        Age: 21, 
+        Branch: "Electrical Engineering", 
+        Address: { City: "Los Angeles", State: "CA" }, 
+        Hobbies: ["Painting", "Cycling"] 
+    },
+    { 
+        RollNo: 3, 
+        Name: "Alice Johnson", 
+        Age: 24, 
+        Branch: "Mechanical Engineering", 
+        Address: { City: "Chicago", State: "IL" }, 
+        Hobbies: ["Traveling", "Cooking"] 
+    },
+    { 
+        RollNo: 4, 
+        Name: "Bob Lee", 
+        Age: 20, 
+        Branch: "Civil Engineering", 
+        Address: { City: "Houston", State: "TX" }, 
+        Hobbies: ["Photography", "Hiking"] 
+    },
+    { 
+        RollNo: 5, 
+        Name: "Mary Wilson", 
+        Age: 22, 
+        Branch: "Computer Science", 
+        Address: { City: "San Francisco", State: "CA" }, 
+        Hobbies: ["Writing", "Music"] 
+    },
+    { 
+        RollNo: 6, 
+        Name: "David Brown", 
+        Age: 25, 
+        Branch: "Physics", 
+        Address: { City: "Boston", State: "MA" }, 
+        Hobbies: ["Astronomy", "Chess"] 
+    },
+    { 
+        RollNo: 7, 
+        Name: "Sophia Clark", 
+        Age: 19, 
+        Branch: "Mathematics", 
+        Address: { City: "Dallas", State: "TX" }, 
+        Hobbies: ["Reading", "Jogging"] 
+    },
+    { 
+        RollNo: 8, 
+        Name: "James Miller", 
+        Age: 23, 
+        Branch: "Biology", 
+        Address: { City: "Seattle", State: "WA" }, 
+        Hobbies: ["Birdwatching", "Camping"] 
+    },
+    { 
+        RollNo: 9, 
+        Name: "Isabella Davis", 
+        Age: 22, 
+        Branch: "Literature", 
+        Address: { City: "Miami", State: "FL" }, 
+        Hobbies: ["Writing", "Dancing"] 
+    },
+    { 
+        RollNo: 10, 
+        Name: "Ethan Martinez", 
+        Age: 21, 
+        Branch: "Chemistry", 
+        Address: { City: "San Diego", State: "CA" }, 
+        Hobbies: ["Gardening", "Cooking"] 
+    }
+])
+
+
+4. Display All Students' Information
+
+To display all student information in the `Students` collection, use the following query:
+
+db.Students.find().pretty()
+
+The pretty() method will format the output to be more readable.
+
+
+5. Display Student Information Whose Name Starts with 'A'
+
+To find students whose name starts with 'A', use the following query:
+
+db.Students.find({ Name: { $regex: /^A/ } }).pretty()
+
+Here, `$regex: /^A/` matches documents where the `Name` field starts with the letter 'A'. The caret `^` indicates the start of the string.
+
+
+6. Display the Total Number of Documents in the Collection
+
+To find the total number of documents in the `Students` collection, use the following query:
+
+db.Students.countDocuments()
+
+This will return the total number of documents in the `Students` collection.
+
+
+7. Conclusion
+
+With these commands, you have:
+
+1. Created a database `Institute`.
+2. Created a collection `Students`.
+3. Inserted 10 student documents into the collection.
+4. Displayed student information with the `find()` method.
+5. Displayed student information whose name starts with 'A' using the `$regex` operator.
+6. Displayed the total number of documents in the collection using `countDocuments()`.
+
+Feel free to modify or extend these queries as per your requirements for further operations such as updates, deletions, or more complex filtering.
+
+End of MongoDB Queries File
