@@ -1,0 +1,40 @@
+1. Display the information of employees, paid more than ‘ABCD’ from the Employee table.
+
+SELECT *
+FROM Employee
+WHERE salary > (SELECT salary FROM Employee WHERE name = 'ABCD');
+========================================================================================================
+2. List the name of the employees, who live in the same city as 'ABCD'.
+
+SELECT name
+FROM Employee
+WHERE city = (SELECT city FROM Employee WHERE name = 'ABCD');
+
+========================================================================================================
+3. Display the information of employees, paid less salary than average salary throughout the company.
+
+SELECT *
+FROM Employee
+WHERE salary < (SELECT AVG(salary) FROM Employee);
+=================================================================================================
+
+4. Display the information of employees having maximum salary in the company.
+
+SELECT *
+FROM Employee
+WHERE salary = (SELECT MAX(salary) FROM Employee);
+
+========================================================================================================================================
+5. Display the employee name, salary, and department no of those employees whose salary is the minimum salary of that department.
+
+SELECT name, salary, dept_id
+FROM Employee e
+WHERE salary = (SELECT MIN(salary) FROM Employee WHERE dept_id = e.dept_id);
+
+=============================================================================================================
+6. List the name of the employees, who live in the same city as 'ABCD'.
+
+SELECT name
+FROM Employee
+WHERE city = (SELECT city FROM Employee WHERE name = 'ABCD');
+
