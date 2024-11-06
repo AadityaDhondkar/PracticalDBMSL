@@ -1,0 +1,168 @@
+-- --------------------------------------------------------
+-- 1. Create Sequences for Auto-Incrementing IDs
+-- --------------------------------------------------------
+
+-- Sequence for Patient IDs
+CREATE SEQUENCE seq_patient_id
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+-- Sequence for Doctor IDs
+CREATE SEQUENCE seq_doctor_id
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+-- Sequence for Appointment IDs
+CREATE SEQUENCE seq_appointment_id
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+-- Sequence for Treatment IDs
+CREATE SEQUENCE seq_treatment_id
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+-- --------------------------------------------------------
+-- 2. Create Tables with Constraints
+-- --------------------------------------------------------
+
+-- Table to store Patient Information
+CREATE TABLE Patient (
+    patient_id NUMBER PRIMARY KEY, -- Using sequence-generated IDs
+    first_name VARCHAR2(50) NOT NULL,
+    last_name VARCHAR2(50) NOT NULL,
+    dob DATE NOT NULL,
+    gender CHAR(1) CHECK (gender IN ('M', 'F')), -- Gender constraint
+    contact_number VARCHAR2(15),
+    email VARCHAR2(100),
+    address VARCHAR2(255)
+);
+
+-- Table to store Doctor Information
+CREATE TABLE Doctor (
+    doctor_id NUMBER PRIMARY KEY, -- Using sequence-generated IDs
+    first_name VARCHAR2(50) NOT NULL,
+    last_name VARCHAR2(50) NOT NULL,
+    specialty VARCHAR2(100),
+    contact_number VARCHAR2(15),
+    email VARCHAR2(100)
+);
+
+-- Table to store Appointments
+CREATE TABLE Appointment (
+    appointment_id NUMBER PRIMARY KEY, -- Using sequence-generated IDs
+    patient_id NUMBER REFERENCES Patient(patient_id) ON DELETE CASCADE, -- Foreign Key
+    doctor_id NUMBER REFERENCES Doctor(doctor_id) ON DELETE SET NULL, -- Foreign Key
+    appointment_date DATE NOT NULL,
+    reason_for_visit VARCHAR2(255),
+    status VARCHAR2(50) DEFAULT 'Scheduled' CHECK (status IN ('Scheduled', 'Completed', 'Cancelled')) -- Appointment Status
+);
+
+-- Table to store Treatment Information
+CREATE TABLE Treatment (
+    treatment_id NUMBER PRIMARY KEY, -- Using sequence-generated IDs
+    appointment_id NUMBER REFERENCES Appointment(appointment_id) ON DELETE CASCADE, -- Foreign Key
+    treatment_date DATE NOT NULL,
+    treatment_description VARCHAR2(255),
+    doctor_id NUMBER REFERENCES Doctor(doctor_id) ON DELETE SET NULL, -- Foreign Key
+    treatment_cost NUMBER(10, 2)
+);
+
+-- --------------------------------------------------------
+-- 3. Create Indexes for Faster Search
+-- --------------------------------------------------------
+
+-- Index for searching patients by last name
+CREATE INDEX idx_patient_lastname ON Patient (last_name);
+
+-- Index for searching doctors by specialty
+CREATE INDEX idx_doctor_specialty ON Doctor (specialty);
+
+-- Index for searching appointments by patient_id
+CREATE INDEX idx_appointment_patient_id ON Appointment (patient_id);
+
+-- --------------------------------------------------------
+-- 4. Create Views for Common Queries
+-- --------------------------------------------------------
+
+-- View to get the list of appointments with patient and doctor details
+CREATE VIEW view_appointments AS
+SELECT 
+    a.appointment_id,
+    p.first_name AS patient_first_name,
+    p.last_name AS patient_last_name,
+    d.first_name AS doctor_first_name,
+    d.last_name AS doctor_last_name,
+    a.appointment_date,
+    a.status
+FROM Appointment a
+JOIN Patient p ON a.patient_id = p.patient_id
+JOIN Doctor d ON a.doctor_id = d.doctor_id;
+
+-- View to get the list of treatments along with patient and doctor details
+CREATE VIEW view_treatments AS
+SELECT 
+    t.treatment_id,
+    p.first_name AS patient_first_name,
+    p.last_name AS patient_last_name,
+    d.first_name AS doctor_first_name,
+    d.last_name AS doctor_last_name,
+    t.treatment_description,
+    t.treatment_cost,
+    t.treatment_date
+FROM Treatment t
+JOIN Appointment a ON t.appointment_id = a.appointment_id
+JOIN Patient p ON a.patient_id = p.patient_id
+JOIN Doctor d ON t.doctor_id = d.doctor_id;
+
+-- --------------------------------------------------------
+-- 5. Example of Triggers (optional but for learning purpose)
+-- --------------------------------------------------------
+
+-- Trigger to automatically generate patient ID before insert
+CREATE OR REPLACE TRIGGER trg_patient_id
+BEFORE INSERT ON Patient
+FOR EACH ROW
+BEGIN
+    SELECT seq_patient_id.NEXTVAL
+    INTO :NEW.patient_id
+    FROM dual;
+END;
+
+-- Trigger to automatically generate doctor ID before insert
+CREATE OR REPLACE TRIGGER trg_doctor_id
+BEFORE INSERT ON Doctor
+FOR EACH ROW
+BEGIN
+    SELECT seq_doctor_id.NEXTVAL
+    INTO :NEW.doctor_id
+    FROM dual;
+END;
+
+-- Trigger to automatically generate appointment ID before insert
+CREATE OR REPLACE TRIGGER trg_appointment_id
+BEFORE INSERT ON Appointment
+FOR EACH ROW
+BEGIN
+    SELECT seq_appointment_id.NEXTVAL
+    INTO :NEW.appointment_id
+    FROM dual;
+END;
+
+-- Trigger to automatically generate treatment ID before insert
+CREATE OR REPLACE TRIGGER trg_treatment_id
+BEFORE INSERT ON Treatment
+FOR EACH ROW
+BEGIN
+    SELECT seq_treatment_id.NEXTVAL
+    INTO :NEW.treatment_id
+    FROM dual;
+END;
+
+-- --------------------------------------------------------
+-- End of SQL DDL for Hospital Management System
+-- --------------------------------------------------------
