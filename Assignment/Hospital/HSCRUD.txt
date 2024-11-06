@@ -1,0 +1,126 @@
+-- Create Tables for the Hospital Management System
+
+-- Patients Table
+CREATE TABLE patients (
+    patient_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    dob DATE,
+    gender CHAR(1),
+    phone_number VARCHAR(15),
+    address VARCHAR(100)
+);
+
+-- Doctors Table
+CREATE TABLE doctors (
+    doctor_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    specialization VARCHAR(50),
+    phone_number VARCHAR(15),
+    email VARCHAR(50)
+);
+
+-- Appointments Table
+CREATE TABLE appointments (
+    appointment_id INT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    appointment_date DATE,
+    appointment_time TIME,
+    status VARCHAR(20),
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
+);
+
+-- Medications Table
+CREATE TABLE medications (
+    medication_id INT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    medication_name VARCHAR(100),
+    dosage VARCHAR(50),
+    prescription_date DATE,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
+);
+
+-- Insert Data into Patients Table
+INSERT INTO patients (patient_id, first_name, last_name, dob, gender, phone_number, address)
+VALUES
+(1, 'John', 'Doe', '1985-06-15', 'M', '555-1234', '123 Elm St, Springfield'),
+(2, 'Jane', 'Smith', '1990-07-22', 'F', '555-5678', '456 Oak St, Springfield'),
+(3, 'Mary', 'Johnson', '1978-11-03', 'F', '555-8765', '789 Pine St, Springfield');
+
+-- Insert Data into Doctors Table
+INSERT INTO doctors (doctor_id, first_name, last_name, specialization, phone_number, email)
+VALUES
+(1, 'Dr. Robert', 'Brown', 'Cardiology', '555-1111', 'robert.brown@hospital.com'),
+(2, 'Dr. Lisa', 'Green', 'Neurology', '555-2222', 'lisa.green@hospital.com'),
+(3, 'Dr. Kevin', 'White', 'Orthopedics', '555-3333', 'kevin.white@hospital.com');
+
+-- Insert Data into Appointments Table
+INSERT INTO appointments (appointment_id, patient_id, doctor_id, appointment_date, appointment_time, status)
+VALUES
+(1, 1, 1, '2024-11-10', '09:00:00', 'Scheduled'),
+(2, 2, 2, '2024-11-11', '10:00:00', 'Scheduled'),
+(3, 3, 3, '2024-11-12', '14:00:00', 'Scheduled');
+
+-- Insert Data into Medications Table
+INSERT INTO medications (medication_id, patient_id, doctor_id, medication_name, dosage, prescription_date)
+VALUES
+(1, 1, 1, 'Aspirin', '100mg', '2024-11-01'),
+(2, 2, 2, 'Ibuprofen', '200mg', '2024-11-02'),
+(3, 3, 3, 'Paracetamol', '500mg', '2024-11-03');
+
+-- SELECT Statement to Retrieve All Patients
+SELECT * FROM patients;
+
+-- SELECT Statement with WHERE clause to Find Patients by Gender
+SELECT * FROM patients WHERE gender = 'F';
+
+-- SELECT Statement with JOIN to Find All Appointments with Patient and Doctor Info
+SELECT a.appointment_id, p.first_name AS patient_first_name, p.last_name AS patient_last_name, 
+       d.first_name AS doctor_first_name, d.last_name AS doctor_last_name, 
+       a.appointment_date, a.appointment_time, a.status
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id;
+
+-- SELECT with Aggregation: Count the Number of Patients
+SELECT COUNT(*) AS total_patients FROM patients;
+
+-- UPDATE Statement to Change the Status of an Appointment
+UPDATE appointments
+SET status = 'Completed'
+WHERE appointment_id = 1;
+
+-- DELETE Statement to Remove a Medication Record
+DELETE FROM medications
+WHERE medication_id = 2;
+
+-- Using Operators in SELECT: Find Patients with 'St' in Address
+SELECT * FROM patients WHERE address LIKE '%St%';
+
+-- Using Functions: Format the Date of Birth in a Different Format
+SELECT patient_id, first_name, last_name, 
+       TO_CHAR(dob, 'DD-Mon-YYYY') AS formatted_dob
+FROM patients;
+
+-- Using Set Operators: Find Doctors who Specialize in Either 'Cardiology' or 'Neurology'
+SELECT doctor_id, first_name, last_name, specialization
+FROM doctors
+WHERE specialization = 'Cardiology'
+UNION
+SELECT doctor_id, first_name, last_name, specialization
+FROM doctors
+WHERE specialization = 'Neurology';
+
+-- Using Set Operators: Find Patients who Have or Have Not Seen a Doctor
+SELECT patient_id, first_name, last_name
+FROM patients
+WHERE patient_id IN (SELECT patient_id FROM appointments)
+UNION
+SELECT patient_id, first_name, last_name
+FROM patients
+WHERE patient_id NOT IN (SELECT patient_id FROM appointments);
